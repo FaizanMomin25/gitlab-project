@@ -1,10 +1,10 @@
 image: 'abhishekf5/maven-abhishek-docker-agent:v1'
 
 variables:
-  DOCKER_HOST: tcp://docker:2375
-  DOCKER_TLS_CERTDIR: ''
-#  SONAR_HOST_URL: http://54.237.226.245:9000
-#  SONAR_LOGIN: ${SONAR_LOGIN}
+#   DOCKER_HOST: tcp://docker:2375
+#   DOCKER_TLS_CERTDIR: ''
+  SONAR_HOST_URL: http://13.127.87.30:9000
+  SONAR_LOGIN: ${SONAR_LOGIN}
 
 # Define the default working directory for the pipeline
 before_script:
@@ -13,8 +13,8 @@ before_script:
 stages:   
   - build
   - test
-#  - sonarqube
-  - dockerization
+  - sonarqube
+#  - dockerization
 
 build-job:  
   stage: build
@@ -28,21 +28,21 @@ unit-test-job:
     - echo "Running unit tests... This will take about 60 seconds."
     - mvn test
 
-#code-quality-job:  
-#  stage: sonarqube 
-#  script:
-#    - echo "scanning code"
-#    -  mvn sonar:sonar -Dsonar.host.url=${SONAR_HOST_URL} -Dsonar.login=${SONAR_LOGIN}
+code-quality-job:  
+ stage: sonarqube 
+ script:
+   - echo "scanning code"
+   -  mvn sonar:sonar -Dsonar.host.url=${SONAR_HOST_URL} -Dsonar.login=${SONAR_LOGIN}
 
-docker:
-  stage: dockerization
-  image: docker:19.03
-  services:
-    - name: docker:dind
+# docker:
+#   stage: dockerization
+#   image: docker:19.03
+#   services:
+#     - name: docker:dind
 
-  script:
-    - whoami
-    - docker build -t gitlab-cicd-demo:latest .
-    - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-    - docker tag gitlab-cicd-demo:latest $DOCKER_USERNAME/gitlab-cicd-demo:latest
-    - docker push $DOCKER_USERNAME/gitlab-cicd-demo:latest
+#   script:
+#     - whoami
+#     - docker build -t gitlab-cicd-demo:latest .
+#     - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+#     - docker tag gitlab-cicd-demo:latest $DOCKER_USERNAME/gitlab-cicd-demo:latest
+#     - docker push $DOCKER_USERNAME/gitlab-cicd-demo:latest
